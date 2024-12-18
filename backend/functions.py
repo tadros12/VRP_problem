@@ -93,9 +93,10 @@ def evolve_population(population, coords, num_customers, mutation_rate, retain_r
     return np.array(next_gen)
 
 
-def run_ga(coords, population_size=100, generations=1000, mutation_rate=0.02, retain_rate=0.2):
+
+def run_ga(coords, population, generations=1000, mutation_rate=0.02, retain_rate=0.2):
+    print("Genetic Algorithm")
     num_customers = len(coords) - 1
-    population = initialize_population(population_size, num_customers)
 
     best_route = None
     best_distance = float('inf')
@@ -126,4 +127,100 @@ def run_ga(coords, population_size=100, generations=1000, mutation_rate=0.02, re
         "best_distance_arr": best_distance_arr,
         "gen_of_best_distance": gen_of_best_distance,
         "n_generations": int(generations)
+    }
+
+def de_mutate(diff_population, target_idx, F):
+
+    pop_size = len(diff_population)
+
+    indices = list(range(pop_size))
+    indices.remove(target_idx) # so i dont chooce target for calculation
+    x1, x2, x3 = diff_population[np.random.choice(indices, 3, replace=False)]
+
+    mutant = x3 + F * (x2 - x1)
+
+
+    mutant = np.round(mutant).astype(int)# formula can result in float values so i round them to int
+
+    return mutant
+
+def repair_mutant(mutant, num_customers):
+    used = set(mutant[1:-1])  # to save depot so we dont use it 
+
+    # iterate over the mutant vector معدا الاول والاخير
+    for i in range(1, len(mutant) - 1):
+        if mutant[i] < 1 or mutant[i] > num_customers or list(mutant).count(mutant[i]) > 1:
+            # find the smallest number not in use
+            if mutant[i] < 1:
+                for num in range(1, num_customers + 1):
+                    if num not in used:
+                        mutant[i] = num
+                        used.add(num)
+                        break
+
+            # find the largest number not in use
+            elif mutant[i] > num_customers:
+                for num in range(num_customers, 0, -1):
+                    if num not in used:
+                        mutant[i] = num
+                        used.add(num)
+                        break
+            #duplicates
+            elif list(mutant).count(mutant[i]) > 1:
+                for num in range(1, num_customers + 1):
+                    if num not in used:
+                        mutant[i] = num
+                        used.add(num)
+                        break
+        else:
+            # Add valid values to the used set
+            used.add(mutant[i])
+
+    return mutant
+
+def run_differential_evolution(F, CR, num_generations, diff_population, num_customers, coords):
+    print("Differential Evolution")
+    pop_size = len(diff_population)
+    best_route = None
+    best_distance = float('inf')
+    best_distance_arr = []
+    gen_of_best_distance = []
+    
+    for generation in range(num_generations):
+        new_population = []
+        
+        for target_idx in range(pop_size):
+            mutant = de_mutate(diff_population, target_idx, F)
+            mutant = repair_mutant(mutant, num_customers)
+            
+            target = diff_population[target_idx]
+            if np.random.rand() < CR:
+                child = crossover(mutant, target)
+            else:
+                child = target.copy()
+            
+            target_distance = calculate_distance(target, coords)
+            child_distance = calculate_distance(child, coords)
+            
+            if child_distance < target_distance:
+                new_population.append(child)
+            else:
+                new_population.append(target)
+            
+            if child_distance < best_distance:
+                best_route = child
+                best_distance = child_distance
+                print(f"Generation {generation + 1}/{num_generations}: Best Distance = {best_distance:.2f}")
+                gen_of_best_distance.append(generation + 1)
+                best_distance_arr.append(best_distance)
+        
+        diff_population = np.array(new_population)
+    
+    # Ensure all returned types are JSON-serializable
+    return {
+        "best_route": best_route.tolist() if best_route is not None else None,
+        "best_distance": float(best_distance),
+        "best_distance_arr": best_distance_arr,  # Already a list from .append()
+        "gen_of_best_distance": gen_of_best_distance,
+        "n_generations": int(num_generations)
     }
