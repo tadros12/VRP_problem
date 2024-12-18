@@ -211,7 +211,9 @@ def run_differential_evolution(F, CR, num_generations, diff_population, num_cust
                 best_route = child
                 best_distance = child_distance
                 print(f"Generation {generation + 1}/{num_generations}: Best Distance = {best_distance:.2f}")
-                gen_of_best_distance.append(generation + 1)
+                
+                if generation + 1 not in gen_of_best_distance:
+                    gen_of_best_distance.append(generation + 1)
                 best_distance_arr.append(best_distance)
         
         diff_population = np.array(new_population)
