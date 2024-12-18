@@ -1,7 +1,7 @@
 // "use client";
 
 // import dynamic from "next/dynamic";
-import React, { useState,useEffect } from "react";
+import React from "react";
 import Plot from "react-plotly.js";
 import { Data } from "plotly.js";
 // Dynamically import Plot to ensure client-side only rendering
