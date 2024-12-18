@@ -26,7 +26,7 @@ export default function RunGA({ action , pending, title }:{action: (payload: For
           id="population_size"
           placeholder="Enter numbers of population size"
           value={population_size}
-          min={1}
+          min={10}
         />
       </div>
       <div className="w-full">
@@ -40,7 +40,7 @@ export default function RunGA({ action , pending, title }:{action: (payload: For
           id="generations"
           placeholder="Enter numbers of generations"
           value={generations}
-          min={1}
+          min={2}
         />
       </div>
       <div className="w-full">
@@ -56,6 +56,7 @@ export default function RunGA({ action , pending, title }:{action: (payload: For
           value={mutation_rate}
           min={0.01}
           step={0.01}
+          max={1}
         />
       </div>
       <div className="w-full">
@@ -71,6 +72,7 @@ export default function RunGA({ action , pending, title }:{action: (payload: For
           value={retain_rate}
           min={0.1}
           step={0.1}
+          max={1}
         />
       </div>
       <Button disabled={pending} type="submit"> {pending ? "Running..." : `solve with ${title}`} </Button>

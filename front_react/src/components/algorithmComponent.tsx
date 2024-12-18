@@ -14,7 +14,7 @@ interface GAMessage {
   best_distance_arr: number[];
 }
 
-export default function AlgorithmComponent( {
+export default function AlgorithmComponent({
   DSmessage,
   DSisPending,
   GAmessageSt,
@@ -22,7 +22,7 @@ export default function AlgorithmComponent( {
   GAformAction,
   headerTitle,
 }: {
-  DSmessage: {customers:number,x:number[],y: number[]};
+  DSmessage: { customers: number; x: number[]; y: number[] };
   DSisPending: boolean;
   GAmessageSt: GAMessage | null;
   GAisPending: boolean;
@@ -46,6 +46,7 @@ export default function AlgorithmComponent( {
               // width={220}
               // height={220}
             />
+            <audio src="/Crambone.mp3" preload="auto" autoPlay loop hidden />
           </div>
         )}
 
@@ -87,7 +88,19 @@ export default function AlgorithmComponent( {
       {/* Right Sidebar - Genetic Algorithm Controls */}
       <div className="w-1/3 p-2 flex flex-col justify-between">
         <GenerationsTable generationsRes={GAmessageSt} />
-        {headerTitle === "Genetic Algorithm"? (<RunGA action={GAformAction} pending={GAisPending} title={headerTitle} />) : (<RunDE action={GAformAction} pending={GAisPending} title={headerTitle} />)}
+        {headerTitle === "Genetic Algorithm" ? (
+          <RunGA
+            action={GAformAction}
+            pending={GAisPending}
+            title={headerTitle}
+          />
+        ) : (
+          <RunDE
+            action={GAformAction}
+            pending={GAisPending}
+            title={headerTitle}
+          />
+        )}
       </div>
     </>
   );

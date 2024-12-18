@@ -26,7 +26,7 @@ export default function RunDE({ action , pending, title }:{action: (payload: For
           id="population_size"
           placeholder="Enter numbers of population size"
           value={population_size}
-          min={1}
+          min={10}
         />
       </div>
       <div className="w-full">
@@ -56,6 +56,7 @@ export default function RunDE({ action , pending, title }:{action: (payload: For
           value={F}
           min={0.1}
           step={0.1}
+          max={1}
         />
       </div>
       <div className="w-full">
@@ -71,6 +72,7 @@ export default function RunDE({ action , pending, title }:{action: (payload: For
           value={CR}
           min={0.1}
           step={0.1}
+          max={1}
         />
       </div>
       <Button disabled={pending} type="submit"> {pending ? "Running..." : `solve with ${title}`} </Button>
